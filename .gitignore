@@ -210,3 +210,5 @@ __marimo__/
 # Stochastic-Batman's additions
 *.pdf
 *.txt
+*.iml
+*.xml

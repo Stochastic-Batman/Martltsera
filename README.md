@@ -11,7 +11,7 @@ This project follows a **code-first** approach. The core logic is implemented in
 Martltsera/
 ├── src/
 │   ├── Gamarjoba.py    # Defines the Seq2Seq GRU/LSTM Architecture
-│   ├── dataset.py      # Handles synthetic error generation & data loading
+│   ├── get_data.py      # Handles synthetic error generation & data loading
 │   ├── train.py        # Contains the training loop and saving logic
 │   └── predict.py      # Inference logic for correcting words
 ├── notebooks/

@@ -9,15 +9,19 @@ This project follows a **code-first** approach. The core logic is implemented in
 
 ```text
 Martltsera/
-├── src/
-│   ├── Gamarjoba.py    # Defines the Seq2Seq GRU/LSTM Architecture
-│   ├── get_data.py      # Handles synthetic error generation & data loading
-│   ├── train.py        # Contains the training loop and saving logic
-│   └── predict.py      # Inference logic for correcting words
+├── data_src/
+│   ├── wordsChunk_0.json  # From https://github.com/AleksandreSukh/GeorgianWordsDataBase
+│   ├── wordsChunk_1.json
+│   └── wordsChunk_2.json
 ├── notebooks/
-│   ├── 1_training.ipynb   # Data generation & Model training
+│   ├── 1_training.ipynb  # Data generation & Model training
 │   └── 2_inference.ipynb  # Interactive correction demo
-└── models/                # Stores trained model weights
+├── models/  # Stores trained model weights
+├── src/
+│   ├── Gamarjoba.py  # Defines the Seq2Seq GRU/LSTM Architecture
+│   ├── get_data.py  # Handles synthetic error generation & data loading
+│   ├── train.py  # Contains the training loop and saving logic
+│   └── predict.py  # Inference logic for correcting words
 ```
 
 ## Setup
@@ -29,6 +33,8 @@ Check your Python version with `python --version`. If it is not already Python 3
 and install requirements with:
 
 `pip install -r requirements.txt`
+
+For training of the model, one must install `wordsChunk_0.json`, `wordsChunk_1.json` and `wordsChunk_2.json` from `https://github.com/AleksandreSukh/GeorgianWordsDataBase` and place it under `data_src/` folder. 
 
 ## Usage
 

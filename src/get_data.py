@@ -131,5 +131,5 @@ if __name__ == "__main__":
 
     print("\n<== Testing dataset generation ==>")
     data = get_dataset_pairs(dictionary_size=15)
-    for og, c in data:
-        print(f"Input: {og} | Target: {c}")
+    for corrupted, original in data:
+        print(f"Corrupted: {corrupted} | Original: {original}")

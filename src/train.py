@@ -1,6 +1,5 @@
 import argparse
 import logging
-import math
 import os
 import random
 import time
@@ -22,7 +21,7 @@ NUM_LAYERS = 1
 DROPOUT_P = 0.2
 LEARNING_RATE = 0.0001
 TEACHER_FORCING_RATIO = 0.5
-MODEL_SAVE_PATH = "../models/Martltsera_4.pth"
+MODEL_SAVE_PATH = "../models/Martltsera_5.pth"
 SOS_token = 0
 EOS_token = 1
 
@@ -35,16 +34,15 @@ VOCAB_SIZE = len(ALL_GEORGIAN_CHARS) + 2
 # I adopted a classic encoder-decoder (seq2seq) architecture with no forced alignment.
 # The encoder (LSTM) processes the entire misspelled input and compresses it into a fixed-size context (final hidden and cell states).
 # The decoder (also LSTM) then autoregressively generates the corrected word one character at a time, starting from a <SOS> token and stopping when it predicts <EOS>.
-# This design allows the output length to be completely independent of input length,
-# naturally handling insertions, deletions, and substitutions without any padding or length constraints.
-
+# This design allows the output length to be completely independent of input length, naturally handling insertions, deletions, and substitutions without any padding or length constraints.
+#
 # Character Vocabulary and Handling the Georgian Alphabet
 # The Georgian Mkhedruli script consists of 33 modern letters (U+10D0 to U+10F0, but contiguous from U+10D0='ა' to U+10FC='ჰ').
 # In the provided code, ALL_GEORGIAN_CHARS = [chr(i) for i in range(4304, 4337)], which covers exactly these 33 characters (4304 is 10D0 in hex; 4336 is 10FC in hex).
 # The vocabulary size is therefore 33 + 2 special tokens = 35.
 # Character-to-index mapping assigns indices 2..34 to the 33 letters (in Unicode order), reserving 0 for <SOS> and 1 for <EOS>.
 # During tokenization, any character not in this set is skipped (tensor_from_word filters with "if char in char_to_index"), which is safe because the dataset contains only Georgian words and the model focuses exclusively on Mkhedruli script.
-
+#
 # Special Tokens
 # <SOS> (index 0): Used only to initialise the decoder at inference time (and implicitly during teacher forcing in training). It signals the start of generation and provides a neutral starting point for the decoder LSTM.
 # <EOS> (index 1): Appended to every target sequence during training so the model learns to predict it after the last real character. At inference, greedy decoding stops when <EOS> is predicted, preventing over-generation.
@@ -173,7 +171,7 @@ def train_model(epochs: int, batch_size: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--epochs", type=int, default=50, help="Number of epochs to train")
+    parser.add_argument("--epochs", type=int, default=5, help="Number of epochs to train")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch size")
     args = parser.parse_args()
 

@@ -1,7 +1,8 @@
 # Martltsera ✍️
 Character-level Seq2Seq Georgian Spellchecker
 
-Martltsera ("მართლწერა", meaning "Spelling" in Georgian) is uses recurrent neural networks (GRU/LSTM) to correct misspelled Georgian words. It operates on a character level, learning the intrinsic orthography of the language to fix typos, missing characters, and keyboard slips.
+Martltsera ("მართლწერა", meaning "Spelling" in Georgian) is uses recurrent neural networks (GRU/LSTM) to correct misspelled Georgian words. 
+It operates on a character level, learning the intrinsic orthography of the language to fix typos, missing characters, and keyboard slips.
 
 ## Project Structure
 
@@ -42,7 +43,7 @@ For training of the model, one must install `wordsChunk_0.json`, `wordsChunk_1.j
 
 ```bash
 # Trains the model and saves it to models/Martltsera_4.pth
-python src/train.py --epochs 10 --batch_size 64
+python src/train.py --epochs 5 --batch_size 64
 ```
 
 2. Correcting Words (Inference):
@@ -53,3 +54,5 @@ from src.predict import SpellChecker
 corrector = SpellChecker(model_path='models/Martltsera_5.pth')
 print(corrector.fix("გამრჯობა"))
 ```
+
+or, if you prefer to use notebooks, first run `notebooks/data_and_training.ipynb` and then `notebooks/inference.ipynb`.

@@ -22,7 +22,7 @@ VOCAB_SIZE = len(ALL_GEORGIAN_CHARS) + 2
 
 
 class SpellChecker:
-    def __init__(self, model_path: str = "../models/Martltsera_4.pth"):
+    def __init__(self, model_path: str = "../models/Martltsera_5.pth"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = Gamarjoba(VOCAB_SIZE, HIDDEN_SIZE, num_layers=NUM_LAYERS, dropout_p=DROPOUT_P)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
@@ -71,12 +71,12 @@ class SpellChecker:
             return "".join(decoded_chars)
 
 
-def correct_word(word: str, model_path: str = "../models/Martltsera_4.pth") -> str:
+def correct_word(word: str, model_path: str = "../models/Martltsera_5.pth") -> str:
     model = SpellChecker(model_path=model_path)
     return model.fix(word)
 
 
 if __name__ == "__main__":
     logger.info("Inference examples:")
-    for w in ["თბილისი", "საქონელი", "გამარჯობა", "ტელევიზია", "ბაყაყი", "მხედარი"]:
-        logger.info(f"{w} -> {correct_word(w, model_path="../models/Martltsera_4.pth")}")
+    for i, w in enumerate(["თბილისი", "საქონელი", "გამარჯობა", "გაგიმარჯოს", "ტელევიზია", "ბაყაყი", "მხედარი", "ნადირობა", "ნაპოლეონი", "ნარუტო", "შოთა", "აზარტი", "კომპიუტერი", "დაცვა", "ძლიერი", "ქართული", "ქართველი", "გამარჯვებულია", "მეცნიერი", "პროგრამისტი"]):
+        logger.info(f"{i + 1}) {w} -> {correct_word(w, model_path="../models/Martltsera_5.pth")}")

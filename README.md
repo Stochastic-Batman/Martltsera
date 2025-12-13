@@ -35,7 +35,7 @@ and install requirements with:
 
 `pip install -r requirements.txt`
 
-For training of the model, one must install `wordsChunk_0.json`, `wordsChunk_1.json` and `wordsChunk_2.json` from `https://github.com/AleksandreSukh/GeorgianWordsDataBase` and place it under `data_src/` folder. 
+For training of the model, one must download `wordsChunk_0.json`, `wordsChunk_1.json` and `wordsChunk_2.json` from `https://github.com/AleksandreSukh/GeorgianWordsDataBase` and place it under `data_src/` folder. 
 
 ## Usage
 

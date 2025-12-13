@@ -17,6 +17,9 @@ import torch.nn as nn
 # The Encoder reads the entire misspelled word first to capture its full context.
 # The Decoder then uses that information to generate the correct word character by character.
 # This allows the model to handle complex errors like insertions and deletions, not just simple letter replacements.
+SOS_token = 0
+EOS_token = 1
+
 
 class EncoderLSTM(nn.Module):
     def __init__(self, input_size: int, hidden_size: int, num_layers: int = 1, dropout_p: float = 0.2):
@@ -86,7 +89,7 @@ class Gamarjoba(nn.Module):
         for i in range(input_length):
             _, encoder_hidden, encoder_cell = self.encoder(input_tensor[i], encoder_hidden, encoder_cell)  # builds context vector
 
-        decoder_input = torch.tensor([[0]], device=self.device)  # Start-Of-Sequence token assumed 0; starts decoding
+        decoder_input = torch.tensor([[SOS_token]], device=self.device)  # Start-Of-Sequence token assumed 0; starts decoding
         decoder_hidden = encoder_hidden  # passes the Encoder's final memory to Decoder
         decoder_cell = encoder_cell
 
@@ -103,7 +106,7 @@ class Gamarjoba(nn.Module):
             else:
                 _, top_i = decoder_output.topk(1)  # gets the character index with the highest probability
                 decoder_input = top_i.squeeze().detach()  # detach() prevents backprop through this step (treats input as constant)
-                if decoder_input.item() == 1:  # End-Of-Sequence token assumed 1
+                if decoder_input.item() == EOS_token:  # End-Of-Sequence token assumed 1
                     break
 
         return outputs

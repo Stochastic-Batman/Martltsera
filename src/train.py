@@ -51,24 +51,6 @@ VOCAB_SIZE = len(ALL_GEORGIAN_CHARS) + 2
 # No <PAD> token: The model processes sequences one character at a time (batch_size=1 per word effectively, even in batches) and lengths vary naturally, so padding is unnecessary.
 
 
-# for logging
-def as_minutes(s: float) -> str:
-    m = math.floor(s / 60)
-    s -= m * 60
-    return f'{m}m {s:.0f}s'
-
-
-# for logging
-def time_since(since: float, percent: float) -> str:
-    now = time.time()
-    s = now - since
-    if percent == 0:
-        return f'{as_minutes(s)} (- ?)'
-    es = s / percent
-    rs = es - s
-    return f'{as_minutes(s)} (- {as_minutes(rs)})'
-
-
 def tensor_from_word(word: str, device: torch.device) -> torch.Tensor:
     indexes = [char_to_index[char] for char in word if char in char_to_index]
     indexes.append(EOS_token)
@@ -77,37 +59,53 @@ def tensor_from_word(word: str, device: torch.device) -> torch.Tensor:
 
 def train_batch(model: Gamarjoba, optimizer: torch.optim.Optimizer, criterion: nn.NLLLoss, batch_pairs: list[tuple[str, str]], device: torch.device) -> float:
     optimizer.zero_grad()
-    batch_loss = 0.0
+    total_loss = torch.tensor(0.0, device=device)
+    total_tokens = 0
+
     for input_word, target_word in batch_pairs:
         input_tensor = tensor_from_word(input_word, device)
         target_tensor = tensor_from_word(target_word, device)
         target_length = target_tensor.size(0)
         outputs = model(input_tensor, target_tensor, teacher_forcing_ratio=TEACHER_FORCING_RATIO)
-        loss = 0
+        example_loss = torch.tensor(0.0, device=device)
+
         for i in range(target_length):
-            loss += criterion(outputs[i].unsqueeze(0), target_tensor[i])
-        batch_loss += loss.item() / target_length
-    avg_loss = batch_loss / len(batch_pairs)
-    torch.tensor(avg_loss, requires_grad=True).backward()  # to backprop the avg loss
+            example_loss += criterion(outputs[i].unsqueeze(0), target_tensor[i])
+
+        total_loss += example_loss
+        total_tokens += target_length
+
+    if total_tokens > 0:
+        avg_loss = total_loss / total_tokens
+        avg_loss.backward()
+        optimizer.step()
+        return avg_loss.item()
+
     optimizer.step()
-    return avg_loss
+    return 0.0
 
 
 def validate(model: Gamarjoba, criterion: nn.NLLLoss, val_pairs: list[tuple[str, str]], device: torch.device) -> float:
     model.eval()
     total_loss = 0.0
+    total_tokens = 0
+
     with torch.no_grad():
         for input_word, target_word in val_pairs:
             input_tensor = tensor_from_word(input_word, device)
             target_tensor = tensor_from_word(target_word, device)
             target_length = target_tensor.size(0)
             outputs = model(input_tensor, target_tensor, teacher_forcing_ratio=TEACHER_FORCING_RATIO)
-            loss = 0
+            example_loss = 0.0
+
             for i in range(target_length):
-                loss += criterion(outputs[i].unsqueeze(0), target_tensor[i])
-            total_loss += loss.item() / target_length
+                example_loss += criterion(outputs[i].unsqueeze(0), target_tensor[i]).item()
+
+            total_loss += example_loss
+            total_tokens += target_length
+
     model.train()
-    return total_loss / len(val_pairs)
+    return total_loss / total_tokens if total_tokens > 0 else 0.0
 
 
 def get_batches(pairs: list[tuple[str, str]], batch_size: int):
@@ -135,7 +133,7 @@ def train_model(epochs: int, batch_size: int):
     logger.info(f"Dataset ready: {len(train_pairs)} train pairs, {len(val_pairs)} val pairs.")
 
     start_time = time.time()
-    log_interval = 1000
+    log_interval = 200
     loss_interval = 0.0
     total_steps = epochs * len(train_pairs)
     iter_count = 0
@@ -153,9 +151,9 @@ def train_model(epochs: int, batch_size: int):
             loss = train_batch(model, optimizer, criterion, batch_pairs, device)
             loss_interval += loss * batch_len
             if iter_count % log_interval == 0:
-                print_loss_avg = loss_interval / log_interval
-            loss_interval = 0.0
-            logger.info(f"{time_since(start_time, iter_count / total_steps)} ({iter_count} {iter_count / total_steps * 100:.0f}%) Loss: {print_loss_avg:.3f}")
+                loss_avg = loss_interval / log_interval
+                logger.info(f"{iter_count} steps ({iter_count / total_steps * 100:.0f}% complete) | Loss: {loss_avg:.3f}")
+                loss_interval = 0.0
 
         val_loss = validate(model, criterion, val_pairs, device)
         logger.info(f"Epoch {epoch} Validation Loss: {val_loss:.3f}")

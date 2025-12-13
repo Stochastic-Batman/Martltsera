@@ -97,7 +97,7 @@ class Gamarjoba(nn.Module):
 
         for i in range(target_length):
             decoder_output, decoder_hidden, decoder_cell = self.decoder(decoder_input, decoder_hidden, decoder_cell)  # predict next char
-            outputs[i] = decoder_output  # stores the prediction
+            outputs[i] = decoder_output.squeeze(0)  # stores the prediction
 
             use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False  # decides strategy randomly
 

@@ -36,7 +36,7 @@ class SpellChecker:
         return torch.tensor(idxs, dtype=torch.long, device=self.device).view(-1, 1)
 
 
-    @staticmethod  # PyCharm would not shut up
+    @staticmethod  # why not
     def idx_to_char(idx: int) -> str:
         return index_to_char.get(idx, "")
 

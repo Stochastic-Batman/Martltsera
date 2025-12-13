@@ -19,7 +19,7 @@ Martltsera/
 │   └── inference.ipynb  # to the Python scripts
 ├── models/  # Stores trained model weights
 ├── src/
-│   ├── Gamarjoba.py  # Defines the Seq2Seq GRU/LSTM Architecture
+│   ├── Gamarjoba.py  # Defines the Seq2Seq LSTM Architecture
 │   ├── get_data.py  # Handles synthetic error generation & data loading
 │   ├── train.py  # Contains the training loop and saving logic
 │   └── predict.py  # Inference logic for correcting words

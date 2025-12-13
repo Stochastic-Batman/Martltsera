@@ -22,7 +22,7 @@ VOCAB_SIZE = len(ALL_GEORGIAN_CHARS) + 2
 
 
 class SpellChecker:
-    def __init__(self, model_path: str = "../models/Martltsera.pth"):
+    def __init__(self, model_path: str = "../models/Martltsera_4.pth"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = Gamarjoba(VOCAB_SIZE, HIDDEN_SIZE, num_layers=NUM_LAYERS, dropout_p=DROPOUT_P)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
@@ -71,22 +71,12 @@ class SpellChecker:
             return "".join(decoded_chars)
 
 
-def correct_word(word: str, model_path: str) -> str:
+def correct_word(word: str, model_path: str = "../models/Martltsera_4.pth") -> str:
     model = SpellChecker(model_path=model_path)
     return model.fix(word)
 
 
 if __name__ == "__main__":
-    checker = SpellChecker()
-    test_words = [
-        "გამრჯობა",      # common typo
-        "გამარჯობა",      # correct
-        "თბილისი",        # correct
-        "პროგამა",        # missing რ
-        "კომპიუტრი",      # common mistake
-        "სიყვარულ",       # missing ი
-        "მართლწერა",      # correct
-    ]
     logger.info("Inference examples:")
-    for w in test_words:
-        logger.info(f"{w:15} -> {checker.fix(w)}")
+    for w in ["თბილისი", "საქონელი", "გამარჯობა", "ტელევიზია", "ბაყაყი", "მხედარი"]:
+        logger.info(f"{w} -> {correct_word(w, model_path="../models/Martltsera_4.pth")}")

@@ -41,14 +41,15 @@ For training of the model, one must install `wordsChunk_0.json`, `wordsChunk_1.j
 1. You can run the training script directly from the terminal:
 
 ```bash
-# Trains the model and saves it to models/Martltsera.pth
-python src/train.py --epochs 50 --batch_size 64
+# Trains the model and saves it to models/Martltsera_4.pth
+python src/train.py --epochs 10 --batch_size 64
 ```
 
 2. Correcting Words (Inference):
 
 ```Python
 from src.predict import SpellChecker
-corrector = SpellChecker(model_path='models/Martltsera.pth')
+
+corrector = SpellChecker(model_path='models/Martltsera_5.pth')
 print(corrector.fix("გამრჯობა"))
 ```

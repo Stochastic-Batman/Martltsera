@@ -22,7 +22,7 @@ NUM_LAYERS = 1
 DROPOUT_P = 0.2
 LEARNING_RATE = 0.0001
 TEACHER_FORCING_RATIO = 0.5
-MODEL_SAVE_PATH = "../models/Martltsera.pth"
+MODEL_SAVE_PATH = "../models/Martltsera_4.pth"
 SOS_token = 0
 EOS_token = 1
 
@@ -160,9 +160,9 @@ def train_model(epochs: int, batch_size: int):
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            os.makedirs(os.path.dirname(MODEL_SAVE_PATH), exist_ok=True)
-            torch.save(model.state_dict(), MODEL_SAVE_PATH)
-            logger.info(f"New best model saved to {MODEL_SAVE_PATH}")
+            os.makedirs(os.path.dirname(MODEL_SAVE_PATH[:-4] + f"_{epoch}.pth"), exist_ok=True)
+            torch.save(model.state_dict(), MODEL_SAVE_PATH[:-4] + f"_{epoch}.pth")
+            logger.info(f"New best model saved to {MODEL_SAVE_PATH[:-4] + f"_{epoch}.pth"}")
             counter = 0
         else:
             counter += 1
